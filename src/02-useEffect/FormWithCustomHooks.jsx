@@ -1,33 +1,14 @@
-import { useEffect, useState } from "react";
-import { Message } from "./Message";
+import { useForm } from "../hooks/useForm";
 
 export const FormWithCustomHooks = () => {
-   const [formState, setFormState] = useState({
-      username: 'dario',
-      email: 'dario@gmail.com',
-      password: ''
-    });
-  
-  
-    const { username, email } = formState;
-  
-    const onInputChange = ( {target} ) => {
-     const { name, value } = target;
-      setFormState({
-        ...formState,
-        [ name ]: value
-      });
-    }
-  
-    useEffect(() => {
-    /*   console.log('formState change'); */
-    }, [formState]);
-  
-    useEffect(() => {
-    /*   console.log('email change'); */
-    }, [email]);
-  
-  
+
+  const { formState, onInputChange, onResetForm, username, email, password } = useForm({
+          username: '',
+          email: '',
+          password: ''
+  });
+
+  //const { username, email, password } = formState;
   
     return (
       <>
@@ -52,12 +33,21 @@ export const FormWithCustomHooks = () => {
               name="email"
               value={ email }
               autoComplete="off"
-                        onChange={ onInputChange }
+              onChange={ onInputChange }
           />
+
+           <input 
+              type="password"
+              className="form-control mt-2"
+              placeholder="Password"
+              name="password"
+              value={ password }
+              autoComplete="off"
+              onChange={ onInputChange }
+          />
+
+          <button className="btn btn-primary mt-2" onClick={ onResetForm }>Borrar</button>
   
-         { 
-          username === 'dario2' && <Message /> 
-         }
       
       </>
     )
