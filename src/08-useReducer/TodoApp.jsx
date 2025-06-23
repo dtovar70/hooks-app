@@ -1,28 +1,41 @@
-import { useReducer } from "react"
+import { useEffect, useReducer } from "react"
 import { todoReducer } from "./todoReducer"
 import { TodoList } from "./TodoList"
 import { TodoAdd } from "./TodoAdd"
 
+
 const initialState = [
-  {
-    id: new Date().getTime(),
-    description: 'Recolectar la piedra del Alma',
-    done: false,
-  },
-  {
-    id: new Date().getTime() * 3,
-    description: 'Recolectar la piedra del Alma',
-    done: false,
-  }
+
 ]
+
+const init = () => {
+  return JSON.parse(localStorage.getItem('todos')) || [];
+}
 
 export const TodoApp = (onNewTodo) => {
 
-const [todos, dispatchTodo] = useReducer(todoReducer, initialState) 
+const [todos, dispatchTodo] = useReducer(todoReducer, initialState, init) 
+
+useEffect(() => { 
+  localStorage.setItem('todos', JSON.stringify(todos))
+}, [todos])
 
 const handleNewTodo = (newTodo) => {
-  console.log({newTodo});
+  const action = {
+    type: '[TODO] Add Todo',
+    payload: newTodo,
+  }
+  
+  dispatchTodo(action)
 }
+
+  const handleDeleteTodo = ( id ) => {
+    dispatchTodo ({
+      type: '[TODO] Remove Todo',
+      payload: id, 
+    })
+  }
+
   return (
     <>
     
@@ -33,13 +46,14 @@ const handleNewTodo = (newTodo) => {
           <div className="col-7">
             <TodoList
               todos={todos}
+              onDeleteTodo={ handleDeleteTodo }
             />
           </div>
 
           <div className="col-5">
             <h4>Agregar TODO</h4>
             <hr />
-             <TodoAdd onNewTodo={ handleNewTodo}/>
+             <TodoAdd onNewTodo={ handleNewTodo }/>
           </div>
         </div>
 
